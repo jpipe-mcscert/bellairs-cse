@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "id": "c",
+      "label": "My model is performant",
+      "type": "conclusion"
+    },
+    {
+      "id": "s",
+      "label": "Accuracy is greater than 85",
+      "type": "strategy"
+    },
+    {
+      "id": "e1",
+      "label": "Model is available",
+      "type": "evidence"
+    },
+    {
+      "id": "e2",
+      "label": "Test dataset is available",
+      "type": "evidence"
+    }
+  ],
+  "name": "performant",
+  "relations": [
+    {
+      "source": "s",
+      "target": "c"
+    },
+    {
+      "source": "e1",
+      "target": "s"
+    },
+    {
+      "source": "e2",
+      "target": "s"
+    }
+  ],
+  "type": "justification"
+}

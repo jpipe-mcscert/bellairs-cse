@@ -1,0 +1,14 @@
+
+
+// jpipe -d performant -i performant.jd -f svg -o performant.svg
+justification performant {
+	conclusion c is "My model is performant"
+	strategy s   is "Accuracy is greater than .85"
+	s supports c
+
+	evidence e1  is "Model is available"
+	e1 supports s
+	evidence e2  is "Test dataset is available"
+	e2 supports s
+}
+
