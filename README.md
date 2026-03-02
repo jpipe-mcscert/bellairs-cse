@@ -328,4 +328,12 @@ step_04 $ git commit -m "Step 4 - modified file added"
 step_04 $ git push
 ```
 
+And we can create a pull request.
 
+
+
+```
+git checkout main
+git push -d origin step_04
+git branch -D step_04
+```
