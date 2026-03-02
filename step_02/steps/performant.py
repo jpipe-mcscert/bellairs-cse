@@ -11,39 +11,29 @@ from jpipe_runner.framework.decorators.jpipe_decorator import jpipe
 mock = {
     'accuracy':     0.92,
     'model_file':   'https://huggingface.co/boltuix/bert-emotion',
-    'test_dataset': ''
+    'test_dataset': 'tests.csv'
 }
 
-## Conclusion c
-@jpipe(consume=["a"])
+@jpipe(consume=["accuracy"])
 def my_model_is_performant(produce: Callable[[str, Any], None]) -> bool:
-    # nothing more to do than reaching this stage
     return True
 
-## Strategy s
-@jpipe(consume=["m", "d"], produce=["a"])
-def accuracy_is_greater_than_85(m: bool, d: bool,
+@jpipe(consume=["model", "tests"], produce=["accuracy"])
+def accuracy_is_greater_than_85(model: bool, tests: bool,
                                 produce: Callable[[str, Any], None]) -> bool:
-    # load the model; load the tests; measure accuracy
-    if m and d and mock['accuracy'] > 0.85:
-        produce("a", mock['accuracy'])
-        return True
-    return False
+    #if (ok := model and mock['accuracy'] > 0.85):
+    if (ok := model and tests and mock['accuracy'] > 0.85):
+        produce("accuracy", mock['accuracy'])
+    return ok
 
-## Evidence e1
-@jpipe(produce=["m"])
+@jpipe(produce=["model"])
 def model_is_available(produce: Callable[[str, Any], None]) -> bool:
-    # Check that the model file exists and can be loaded
-    if 'model_file' in mock:
-        produce('m', True)
-        return True
-    return False
+    if (found := 'model_file' in mock):
+        produce('model', True)
+    return found  
 
-@jpipe(produce=["d"])
+@jpipe(produce=["tests"])
 def test_dataset_is_available(produce: Callable[[str, Any], None]) -> bool:
-    # Check that the dataset exists on the disk
-    if 'test_dataset' in mock:
-        produce('d', True)
-        return True
-    return False
-
+    if (found := 'test_dataset' in mock):
+        produce('tests', True)
+    return found  
