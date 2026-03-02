@@ -399,7 +399,11 @@ To get the final claim:
 step_05 $ jpipe -d final -i final.jd -f svg -o final.svg
 ```
 
+<div align="center">
 
+![](./step_05/final.svg)
+
+</div>
 
 
 
