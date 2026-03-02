@@ -1,0 +1,31 @@
+name: jPipe Runner Workflow -- Step 03
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Run jPipe Runner
+        uses: jpipe-mcscert/jpipe-runner@feat/v3.1.0
+        with:
+          version: feat/v3.1.0
+          embed_image: "true"
+          image_branch: "diagram-images"
+          jd_file: step_03/performant.json
+          library: step_03/steps/performant.py
+          github-token: ${{ secrets.GITHUB_TOKEN }}
