@@ -1,0 +1,116 @@
+{
+  "elements": [
+    {
+      "id": "converged",
+      "label": "The trained model converges",
+      "type": "sub-conclusion"
+    },
+    {
+      "id": "c",
+      "label": "Model is deployable",
+      "type": "conclusion"
+    },
+    {
+      "id": "s",
+      "label": "Accuracy is greater than 80",
+      "type": "strategy"
+    },
+    {
+      "id": "e2_fair",
+      "label": "Counterfactual dataset is available",
+      "type": "evidence"
+    },
+    {
+      "id": "AND",
+      "label": "All conditions are met",
+      "type": "strategy"
+    },
+    {
+      "id": "s_fair",
+      "label": "Assess counterfactual fairness",
+      "type": "strategy"
+    },
+    {
+      "id": "check_convergence",
+      "label": "Assessing logs to measure convergence",
+      "type": "strategy"
+    },
+    {
+      "id": "e2_conv",
+      "label": "Intermediate logs are available",
+      "type": "evidence"
+    },
+    {
+      "id": "c_fair",
+      "label": "My model is fair",
+      "type": "sub-conclusion"
+    },
+    {
+      "id": "c_perf",
+      "label": "My model is performant",
+      "type": "sub-conclusion"
+    },
+    {
+      "id": "e1_conv",
+      "label": "Trained model is available",
+      "type": "evidence"
+    },
+    {
+      "id": "e2",
+      "label": "Test dataset is available",
+      "type": "evidence"
+    }
+  ],
+  "name": "final",
+  "relations": [
+    {
+      "source": "check_convergence",
+      "target": "converged"
+    },
+    {
+      "source": "AND",
+      "target": "c"
+    },
+    {
+      "source": "converged",
+      "target": "s"
+    },
+    {
+      "source": "e2",
+      "target": "s"
+    },
+    {
+      "source": "c_fair",
+      "target": "AND"
+    },
+    {
+      "source": "c_perf",
+      "target": "AND"
+    },
+    {
+      "source": "converged",
+      "target": "s_fair"
+    },
+    {
+      "source": "e2_fair",
+      "target": "s_fair"
+    },
+    {
+      "source": "e2_conv",
+      "target": "check_convergence"
+    },
+    {
+      "source": "e1_conv",
+      "target": "check_convergence"
+    },
+    {
+      "source": "s_fair",
+      "target": "c_fair"
+    },
+    {
+      "source": "s",
+      "target": "c_perf"
+    }
+  ],
+  "type": "justification"
+}

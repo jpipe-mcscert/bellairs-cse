@@ -1,10 +1,10 @@
-name: jPipe Runner Workflow -- Step 04
+name: jPipe Runner Workflow -- Step 05
 
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'step_04/**'
+      - 'step_05/**'
 
 permissions:
   contents: write
@@ -29,6 +29,6 @@ jobs:
           version: feat/v3.1.0
           embed_image: "true"
           image_branch: "diagram-images"
-          jd_file: step_04/deployable.json
-          library: step_04/steps/deployable.py
+          jd_file: step_05/final.json
+          library: step_05/steps/final.py
           github-token: ${{ secrets.GITHUB_TOKEN }}
