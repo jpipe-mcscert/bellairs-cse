@@ -5,7 +5,7 @@
 - compiler & execution environment
 ```
 $ brew tap jpipe-mcscert/mcscert
-$ brew install jpipe jpipe-runner
+$ brew install jpipe@1.9 jpipe-runner@3.1.0
 ```
 
 - VS Code plugin
