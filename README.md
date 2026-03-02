@@ -328,12 +328,78 @@ step_04 $ git commit -m "Step 4 - modified file added"
 step_04 $ git push
 ```
 
-And we can create a pull request.
+And we can create a pull request. The runner is triggered, and identify that the claim about deployability is not true anymore.
 
 
+<div align="center">
+
+![](./step_04/failure.png)
+
+</div>
+
+To cleanup the branches:
 
 ```
 git checkout main
 git push -d origin step_04
 git branch -D step_04
 ```
+
+## Step 5: Fixing the accuracy issue.
+
+- Code: `step_05`
+- Workflow: `.github/workflows/step_05.yml`
+
+
+Objective: The system can't be deployed anymore, this needs to be fixed. 
+
+One option is to play with the training until both fairness and performance are OK. NLP experts have few confidence on this approach. But they can identify a tradeoff: an accuracy of 0.80 would be ok, as long as the model converges while training.
+
+The first step is to define how to claim that the training process converges. This can be reasonably done by keeping logs of intermediate versions of the model.
+
+```
+justification convergence {
+	conclusion converged is "The trained model converges"
+	strategy check_convergence is "Assessing logs to measure convergence"
+	check_convergence supports converged
+
+	evidence e1_conv is "Trained model is available"
+	e1_conv supports check_convergence
+
+	evidence e2_conv is "Intermediate logs are available"
+	e2_conv supports check_convergence
+}
+```
+
+To get the graphical representation:
+```
+step_05 $ jpipe -d convergence -i final.jd -f svg \
+                -o convergence.svg
+```
+
+We can now refine the argument that _the model is available_, by using this new convergence claim.
+
+
+```
+composition {
+    justification deployable is assemble(fair, performant) {
+        conclusionLabel: 'Model is deployable'
+        strategyLabel: 'All conditions are met'
+    }
+
+	justification final is refine(deployable, convergence) {
+		hook: "Model is available"
+	}
+}
+```
+
+To get the final claim:
+
+```
+step_05 $ jpipe -d final -i final.jd -f svg -o final.svg
+```
+
+
+
+
+

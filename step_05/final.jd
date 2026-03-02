@@ -42,9 +42,6 @@ composition {
         strategyLabel: 'All conditions are met'
     }
 
-	// jpipe -d final -i final.jd -f svg -o final.svg
-	// jpipe -d final -i final.jd -f runner -o steps/final.py
-	// jpipe -d final -i final.jd -f json -o final.json
 	justification final is refine(deployable, convergence) {
 		hook: "Model is available"
 	}
