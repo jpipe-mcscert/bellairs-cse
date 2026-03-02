@@ -1,0 +1,53 @@
+<svg width="378px" height="213px"
+ viewBox="0.00 0.00 378.00 213.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.0 1.0) rotate(0.0) translate(4.0 208.5)">
+<polygon fill="white" stroke="none" points="-4,4 -4,-208.5 373.97,-208.5 373.97,4 -4,4"/>
+<text xml:space="preserve" text-anchor="start" x="175.61" y="-7.2" font-family="Times,serif" font-size="14.00">fair</text>
+<!-- e2_fair -->
+<g id="fair:e2_fair" class="node">
+<title>e2_fair</title>
+<polygon fill="#a4d3ee" stroke="black" stroke-width="1.01" points="196.75,-60.5 0,-60.5 0,-24.5 202.75,-24.5 202.75,-54.5 196.75,-60.5"/>
+<polyline fill="none" stroke="black" stroke-width="1.01" points="196.75,-60.5 196.75,-54.5"/>
+<polyline fill="none" stroke="black" stroke-width="1.01" points="202.75,-54.5 196.75,-54.5"/>
+<text xml:space="preserve" text-anchor="start" x="8" y="-37.45" font-family="Times,serif" font-size="14.00">Counterfactual dataset is available</text>
+</g>
+<!-- s_fair -->
+<g id="fair:s_fair" class="node">
+<title>s_fair</title>
+<polygon fill="palegreen" stroke="black" stroke-width="1.01" points="369.97,-132.5 84.27,-132.5 10.78,-96.5 296.48,-96.5 369.97,-132.5"/>
+<text xml:space="preserve" text-anchor="start" x="108.62" y="-109.45" font-family="Times,serif" font-size="14.00">Assess counterfactual fairness</text>
+</g>
+<!-- e2_fair&#45;&gt;s_fair -->
+<g id="edge1" class="edge">
+<title>e2_fair&#45;&gt;s_fair</title>
+<path fill="none" stroke="black" d="M123.38,-60.8C134.29,-69.39 147.65,-79.89 159.56,-89.26"/>
+<polygon fill="black" stroke="black" points="157.11,-91.79 167.13,-95.22 161.43,-86.28 157.11,-91.79"/>
+</g>
+<!-- c_fair -->
+<g id="fair:c_fair" class="node">
+<title>c_fair</title>
+<path fill="lightgrey" stroke="black" stroke-width="1.01" d="M232.88,-204.5C232.88,-204.5 147.88,-204.5 147.88,-204.5 141.88,-204.5 135.88,-198.5 135.88,-192.5 135.88,-192.5 135.88,-180.5 135.88,-180.5 135.88,-174.5 141.88,-168.5 147.88,-168.5 147.88,-168.5 232.88,-168.5 232.88,-168.5 238.88,-168.5 244.88,-174.5 244.88,-180.5 244.88,-180.5 244.88,-192.5 244.88,-192.5 244.88,-198.5 238.88,-204.5 232.88,-204.5"/>
+<text xml:space="preserve" text-anchor="start" x="143.88" y="-181.45" font-family="Times,serif" font-size="14.00">My model is fair</text>
+</g>
+<!-- s_fair&#45;&gt;c_fair -->
+<g id="edge2" class="edge">
+<title>s_fair&#45;&gt;c_fair</title>
+<path fill="none" stroke="black" d="M190.38,-132.8C190.38,-140.09 190.38,-148.77 190.38,-156.96"/>
+<polygon fill="black" stroke="black" points="186.88,-156.88 190.38,-166.88 193.88,-156.88 186.88,-156.88"/>
+</g>
+<!-- e1_fair -->
+<g id="fair:e1_fair" class="node">
+<title>e1_fair</title>
+<polygon fill="#a4d3ee" stroke="black" stroke-width="1.01" points="332,-60.5 220.75,-60.5 220.75,-24.5 338,-24.5 338,-54.5 332,-60.5"/>
+<polyline fill="none" stroke="black" stroke-width="1.01" points="332,-60.5 332,-54.5"/>
+<polyline fill="none" stroke="black" stroke-width="1.01" points="338,-54.5 332,-54.5"/>
+<text xml:space="preserve" text-anchor="start" x="228.75" y="-37.45" font-family="Times,serif" font-size="14.00">Model is available</text>
+</g>
+<!-- e1_fair&#45;&gt;s_fair -->
+<g id="edge3" class="edge">
+<title>e1_fair&#45;&gt;s_fair</title>
+<path fill="none" stroke="black" d="M257.37,-60.8C246.46,-69.39 233.1,-79.89 221.19,-89.26"/>
+<polygon fill="black" stroke="black" points="219.32,-86.28 213.62,-95.22 223.64,-91.79 219.32,-86.28"/>
+</g>
+</g>
+</svg>

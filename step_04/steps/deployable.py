@@ -7,18 +7,6 @@ from jpipe_runner.framework.decorators.jpipe_decorator import jpipe
 
 # jpipe-runner --library steps/deployable.py --diagram deployable --format svg deployable.json
 
-
-# git checkout -b step_04
-# touch modified_file.py
-# git add modified_file.py 
-# git commit -m "modified file added"  
-# git push
-
-# Cleanup
-# git checkout main
-# git push -d origin step_04
-# git branch -D step_04
-
 mock = {
     'accuracy':     0.82,
     'model_file':   'https://huggingface.co/boltuix/bert-emotion',
@@ -30,65 +18,60 @@ mock = {
 #### Shared #####
 #################
 
-## Evidence e1
+@jpipe()
+def all_conditions_are_met():
+    return True
+
+
 @jpipe(produce=["model"])
 def model_is_available(produce: Callable[[str, Any], None]) -> bool:
-    # Check that the model file exists and can be loaded
-    if 'model_file' in mock:
+    if (found := 'model_file' in mock):
         produce('model', True)
-        return True
-    return False
+    return found  
 
 ######################
 #### Performance #####
 ######################
 
-## Conclusion c
-@jpipe(consume=["a"])
+@jpipe(consume=["accuracy"])
 def my_model_is_performant(produce: Callable[[str, Any], None]) -> bool:
-    # nothing more to do than reaching this stage
     return True
 
-## Strategy s
-@jpipe(consume=["model", "d"], produce=["a"])
-def accuracy_is_greater_than_85(model: bool, d: bool,
+@jpipe(consume=["model", "tests"], produce=["accuracy"])
+def accuracy_is_greater_than_85(model: bool, tests: bool,
                                 produce: Callable[[str, Any], None]) -> bool:
-    # load the model; load the tests; measure accuracy
-    if model and d and mock['accuracy'] > 0.85:
-        produce("a", mock['accuracy'])
-        return True
-    return False
+    #if (ok := model and mock['accuracy'] > 0.85):
+    if (ok := model and tests and mock['accuracy'] > 0.85):
+        produce("accuracy", mock['accuracy'])
+    return ok
 
-@jpipe(produce=["d"])
+@jpipe(produce=["tests"])
 def test_dataset_is_available(produce: Callable[[str, Any], None]) -> bool:
-    # Check that the dataset exists on the disk
-    if 'test_dataset' in mock:
-        produce('d', True)
-        return True
-    return False
+    if (found := 'test_dataset' in mock):
+        produce('tests', True)
+    return found  
+
 
 ###################
 #### Fairness #####
 ###################
 
-@jpipe(consume=["x"])
+@jpipe(consume=["fair"])
 def my_model_is_fair(produce: Callable[[str, Any], None]) -> bool:
-    # nothing more to do than reaching this stage
     return True
    
-@jpipe(consume=["counterfactual", "model"], produce=["x"])
+@jpipe(consume=["counterfactual", "model"], produce=["fair"])
 def assess_counterfactual_fairness(counterfactual: str, model: str,
                                    produce: Callable[[str, Any], None]) -> bool:
-    produce('x', True)
+    produce('fair', True)
     return counterfactual and model
 
 
 @jpipe(produce=["counterfactual"])
 def counterfactual_dataset_is_available(produce: Callable[[str, Any], None]) -> bool:
-    if mock['counterfacts']:
-        produce("counterfactual", True)
-        return True
-    return False
+    if (found := 'counterfacts' in mock):
+        produce('counterfactual', True)
+    return found  
 
 
 

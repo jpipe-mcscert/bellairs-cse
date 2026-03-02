@@ -172,7 +172,7 @@ WARNING - inject_arguments():97 - 2026-03-02 12:03:49,686 - Consumed variable 't
 ## Step 03: Looping in Continuous Integration
 
 - Code folder: `step_03`
-- workflow: `.github/workflows/step_03.yml`
+- Workflow: `.github/workflows/step_03.yml`
 
 Objective: we want to check the claim each time a pull request is made. 
 
@@ -225,5 +225,107 @@ When the validation is done, the execution engine creates a comment in the pull 
 
 </div>
 
+To cleanup the branches:
+```
+git checkout main
+git push -d origin step_03
+git branch -D step_03
+```
+
+## Continuous evolution: Fairness matters
+
+- Code folder: `step_04`
+- Workflow: `.github/workflows/step_04.yml`
+
+Objective: After review of our system, NLP experts are concerned by the fairness of the emotion detection model. They propose to use a counterfactual approach to evaluate fairness as a blackbox, and identify issues, that are then fixed in the training part.
+
+They provide a new claim on how the model is considered fair:
+
+```
+justification fair {
+	conclusion c_fair is "My model is fair"
+	strategy s_fair   is "Assess counterfactual fairness"
+	s_fair supports c_fair
+
+	evidence e1_fair  is "Model is available"
+	e1_fair supports s_fair
+	evidence e2_fair  is "Counterfactual dataset is available"
+	e2_fair supports s_fair
+}
+```
+
+<div align="center">
+
+![](./step_04/fair.svg)
+
+</div>
+
+
+We can now _assemble_ this new claim with the previous one, to claim that we can now deploy our model based on (1) performance and (2) fairness.
+
+```
+composition {
+justification deployable is assemble(fair, performant) {
+        conclusionLabel: 'Model is deployable'
+        strategyLabel: 'All conditions are met'
+    }
+}
+```
+
+To get a graphical representation of the final claim:
+```
+step_04 $ jpipe -d deployable -i deployable.jd -f svg \
+                -o deployable.svg
+```
+
+<div align="center">
+
+![](./step_04/deployable.svg)
+
+</div>
+
+The composition engine identified that two pieces of evidence were shared, and unified them.
+
+We can now implement the missing steps to support the fairness evaluation.
+
+```python
+@jpipe(consume=["fair"])
+def my_model_is_fair(produce: Callable[[str, Any], None]) -> bool:
+    return True
+   
+@jpipe(consume=["counterfactual", "model"], produce=["fair"])
+def assess_counterfactual_fairness(counterfactual: str, model: str,
+                                   produce: Callable[[str, Any], None]) -> bool:
+    produce('fair', True)
+    return counterfactual and model
+
+
+@jpipe(produce=["counterfactual"])
+def counterfactual_dataset_is_available(produce: Callable[[str, Any], None]) -> bool:
+    if (found := 'counterfacts' in mock):
+        produce('counterfactual', True)
+    return found  
+```
+
+For the sake of the demo, let's assume that the accuracy of the model decreased to 0.82 with the new fair training.
+
+```python
+mock = {
+    'accuracy':     0.82,
+    'model_file':   'https://huggingface.co/boltuix/bert-emotion',
+    'test_dataset': 'tests.csv',
+    'counterfacts': 'counterfacts.csv'
+}
+```
+
+We can adapt the workflow to use the new justification, and push the code.
+
+```
+step_04 $ git checkout -b step_04
+step_04 $ touch modified_file.py
+step_04 $ git add modified_file.py 
+step_04 $ git commit -m "Step 4 - modified file added"  
+step_04 $ git push
+```
 
 
