@@ -1,0 +1,33 @@
+
+justification performant {
+	conclusion c_perf is "My model is performant"
+	strategy s   is "Accuracy is greater than 85"
+	s supports c_perf
+
+	evidence e1  is "Model is available"
+	e1 supports s
+	evidence e2  is "Test dataset is available"
+	e2 supports s
+}
+
+// jpipe -d fair -i fair.jd -f svg -o fair.svg
+justification fair {
+	conclusion c_fair is "My model is fair"
+	strategy s_fair   is "Assess counterfactual fairness"
+	s_fair supports c_fair
+
+	evidence e1_fair  is "Model is available"
+	e1_fair supports s_fair
+	evidence e2_fair  is "Counterfactual dataset is available"
+	e2_fair supports s_fair
+}
+
+composition {
+    // jpipe -d deployable -i deployable.jd -f svg -o deployable.svg
+    // jpipe -d deployable -i deployable.jd -f runner -o steps/deployable.py
+    // jpipe -d deployable -i deployable.jd -f json -o deployable.json
+    justification deployable is assemble(fair, performant) {
+        conclusionLabel: 'Model is deployable'
+        strategyLabel: 'All conditions are met'
+    }
+}

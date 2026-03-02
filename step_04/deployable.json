@@ -1,0 +1,89 @@
+{
+  "elements": [
+    {
+      "id": "c",
+      "label": "Model is deployable",
+      "type": "conclusion"
+    },
+    {
+      "id": "s",
+      "label": "Accuracy is greater than 85",
+      "type": "strategy"
+    },
+    {
+      "id": "e2_fair",
+      "label": "Counterfactual dataset is available",
+      "type": "evidence"
+    },
+    {
+      "id": "AND",
+      "label": "All conditions are met",
+      "type": "strategy"
+    },
+    {
+      "id": "s_fair",
+      "label": "Assess counterfactual fairness",
+      "type": "strategy"
+    },
+    {
+      "id": "c_fair",
+      "label": "My model is fair",
+      "type": "sub-conclusion"
+    },
+    {
+      "id": "e1_fair",
+      "label": "Model is available",
+      "type": "evidence"
+    },
+    {
+      "id": "c_perf",
+      "label": "My model is performant",
+      "type": "sub-conclusion"
+    },
+    {
+      "id": "e2",
+      "label": "Test dataset is available",
+      "type": "evidence"
+    }
+  ],
+  "name": "deployable",
+  "relations": [
+    {
+      "source": "AND",
+      "target": "c"
+    },
+    {
+      "source": "e1_fair",
+      "target": "s"
+    },
+    {
+      "source": "e2",
+      "target": "s"
+    },
+    {
+      "source": "c_fair",
+      "target": "AND"
+    },
+    {
+      "source": "c_perf",
+      "target": "AND"
+    },
+    {
+      "source": "e2_fair",
+      "target": "s_fair"
+    },
+    {
+      "source": "e1_fair",
+      "target": "s_fair"
+    },
+    {
+      "source": "s_fair",
+      "target": "c_fair"
+    },
+    {
+      "source": "s",
+      "target": "c_perf"
+    }
+  ],
+  "type": "justification"
+}

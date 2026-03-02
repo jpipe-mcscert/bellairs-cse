@@ -6,7 +6,18 @@ from typing import Any, Callable
 
 from jpipe_runner.framework.decorators.jpipe_decorator import jpipe
 
-# jpipe-runner --library steps/performant.py --diagram performant --format svg performant.json
+
+# git checkout -b step_03
+# touch modified_file.py
+# git add modified_file.py 
+# git commit -m "modified file added"  
+# git push
+
+# Cleanup
+# git checkout main
+# git push -d origin step_03
+# git branch -d step_03
+
 
 mock = {
     'accuracy':     0.92,
