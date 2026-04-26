@@ -241,7 +241,7 @@ When the validation is done, the execution engine creates a comment in the pull 
 
 </div>
 
-To cleanup the branches:
+To cleanup the branches (optional):
 ```
 git checkout main
 git push -d origin step_03
@@ -255,18 +255,18 @@ git branch -D step_03
 
 Objective: After review of our system, NLP experts are concerned by the fairness of the emotion detection model. They propose to use a counterfactual approach to evaluate fairness as a blackbox, and identify issues, that are then fixed in the training part.
 
-They provide a new claim on how the model is considered fair:
+They provide a new claim on how the model is considered fair, in the `fair.jd` file:
 
 ```
 justification fair {
-	conclusion c_fair is "My model is fair"
-	strategy s_fair   is "Assess counterfactual fairness"
-	s_fair supports c_fair
+	conclusion c is "My model is fair"
+	strategy s   is "Flip-rate is below 10%"
+	s supports c
 
-	evidence e1_fair  is "Model is available"
-	e1_fair supports s_fair
-	evidence e2_fair  is "Counterfactual dataset is available"
-	e2_fair supports s_fair
+	evidence e1  is "Model is available"
+	e1 supports s
+	evidence e2  is "Counterfactual dataset is available"
+	e2 supports s
 }
 ```
 
@@ -280,17 +280,18 @@ justification fair {
 We can now _assemble_ this new claim with the previous one, to claim that we can now deploy our model based on (1) performance and (2) fairness.
 
 ```
-composition {
+load "../step_02/performant.jd"
+load "./fair.jd"
+
 justification deployable is assemble(fair, performant) {
-        conclusionLabel: 'Model is deployable'
-        strategyLabel: 'All conditions are met'
-    }
+	conclusionLabel: "Model is deployable"
+	strategyLabel: "All conditions are met"
 }
 ```
 
 To get a graphical representation of the final claim:
 ```
-step_04 $ jpipe -d deployable -i deployable.jd -f svg \
+step_04 $ jpipe -m deployable -i deployable.jd -f svg \
                 -o deployable.svg
 ```
 
@@ -305,32 +306,45 @@ The composition engine identified that two pieces of evidence were shared, and u
 We can now implement the missing steps to support the fairness evaluation.
 
 ```python
-@jpipe(consume=["fair"])
-def my_model_is_fair(produce: Callable[[str, Any], None]) -> bool:
-    return True
-   
-@jpipe(consume=["counterfactual", "model"], produce=["fair"])
-def assess_counterfactual_fairness(counterfactual: str, model: str,
-                                   produce: Callable[[str, Any], None]) -> bool:
+@jpipe_link("deployable:fair:c")
+@jpipe(produce=["fair"], consume=[])
+def my_model_is_fair(produce: JpipeProduce) -> bool:
+    """[sub-conclusion] My model is fair"""
     produce('fair', True)
-    return counterfactual and model
+    return True
 
 
+@jpipe_link("deployable:fair:s")
+@jpipe(consume=["counterfactual", "model"], produce=[])
+def assess_counterfactual_fairness(counterfactual: str, model: str,
+                                   produce: JpipeProduce) -> bool:
+    """[strategy] Assess counterfactual fairness"""
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the dataset
+    counterfactual_ok = counterfactual.endswith('.csv')
+    # We're pretending evaluating the model using the dataset
+    flip_rate_ok = ('flip_rate' in mock) and mock['flip_rate'] < 0.2
+    return model_ok and counterfactual_ok and flip_rate_ok
+
+@jpipe_link("deployable:fair:e2")
 @jpipe(produce=["counterfactual"])
-def counterfactual_dataset_is_available(produce: Callable[[str, Any], None]) -> bool:
+def counterfactual_dataset_is_available(produce: JpipeProduce) -> bool:
+    """[evidence] Counterfactual dataset is available"""
     if (found := 'counterfacts' in mock):
-        produce('counterfactual', True)
-    return found  
+        produce('counterfactual', mock['counterfacts'])
+    return found   
 ```
 
-For the sake of the demo, let's assume that the accuracy of the model decreased to 0.82 with the new fair training.
+For the sake of the demo, let's assume that the flip-rate is actually decent, but that accuracy of the model decreased to 0.82 with the new fairness remediation training.
 
 ```python
 mock = {
-    'accuracy':     0.82,
     'model_file':   'https://huggingface.co/boltuix/bert-emotion',
     'test_dataset': 'tests.csv',
-    'counterfacts': 'counterfacts.csv'
+    'accuracy':     0.82,
+    'counterfacts': 'counterfacts.csv',
+    'flip_rate':    0.08
 }
 ```
 
@@ -344,7 +358,7 @@ step_04 $ git commit -m "Step 4 - modified file added"
 step_04 $ git push
 ```
 
-And we can create a pull request. The runner is triggered, and identify that the claim about deployability is not true anymore.
+And we can create a pull request. The runner is triggered, and identify that the claim about deployability is not true anymore. Depending on how the github repository is configured, a failing workflow can be used to prevent merging this code into the main branch.
 
 
 <div align="center">
@@ -353,7 +367,7 @@ And we can create a pull request. The runner is triggered, and identify that the
 
 </div>
 
-To cleanup the branches:
+To cleanup the branches (optional):
 
 ```
 git checkout main
@@ -389,30 +403,29 @@ justification convergence {
 
 To get the graphical representation:
 ```
-step_05 $ jpipe -d convergence -i final.jd -f svg \
+step_05 $ jpipe -m convergence -i final.jd -f svg \
                 -o convergence.svg
 ```
 
-We can now refine the argument that _the model is available_, by using this new convergence claim.
+We can now refine the argument that _the model is available_, by using this new convergence claim to refine it.
 
 
 ```
-composition {
-    justification deployable is assemble(fair, performant) {
-        conclusionLabel: 'Model is deployable'
-        strategyLabel: 'All conditions are met'
-    }
-
-	justification final is refine(deployable, convergence) {
-		hook: "Model is available"
-	}
+justification deployable is assemble(fair, performant) {
+	conclusionLabel: "Model is deployable"
+	strategyLabel: "All conditions are met"
 }
+
+justification final is refine(deployable, convergence) {
+	hook: "deployable/unified_0"
+}
+
 ```
 
 To get the final claim:
 
 ```
-step_05 $ jpipe -d final -i final.jd -f svg -o final.svg
+step_05 $ jpipe -m final -i final.jd -f svg -o final.svg
 ```
 
 <div align="center">
@@ -421,5 +434,26 @@ step_05 $ jpipe -d final -i final.jd -f svg -o final.svg
 
 </div>
 
+And, as usual, we can validate this claim through the CI/CD onm Github, by creating a pull request.
 
+```
+step_05 $ git checkout -b step_05
+step_05 $ touch modified_file.py
+step_05 $ git add modified_file.py 
+step_05 $ git commit -m "Step 5 - modified file added"  
+step_05 $ git push
+```
 
+<div align="center">
+
+![](./step_05/valid.png)
+
+</div>
+
+To cleanup the branches (optional):
+
+```
+git checkout main
+git push -d origin step_05
+git branch -D step_05
+```

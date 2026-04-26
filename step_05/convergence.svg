@@ -28,31 +28,31 @@
 <path fill="none" stroke="black" d="M182.81,-132.8C182.81,-140.09 182.81,-148.77 182.81,-156.96"/>
 <polygon fill="black" stroke="black" points="179.31,-156.88 182.81,-166.88 186.31,-156.88 179.31,-156.88"/>
 </g>
-<!-- convergence:e1_conv -->
-<g id="convergence:e1_conv" class="node">
-<title>convergence:e1_conv</title>
+<!-- convergence:e1 -->
+<g id="convergence:e1" class="node">
+<title>convergence:e1</title>
 <polygon fill="#9ecae1" stroke="black" points="162.56,-60.5 7.06,-60.5 7.06,-24.5 168.56,-24.5 168.56,-54.5 162.56,-60.5"/>
 <polyline fill="none" stroke="black" points="162.56,-60.5 162.56,-54.5"/>
 <polyline fill="none" stroke="black" points="168.56,-54.5 162.56,-54.5"/>
 <text xml:space="preserve" text-anchor="middle" x="87.81" y="-37.45" font-family="Times,serif" font-size="14.00">Trained model is available</text>
 </g>
-<!-- convergence:e1_conv&#45;&gt;convergence:check_convergence -->
+<!-- convergence:e1&#45;&gt;convergence:check_convergence -->
 <g id="edge2" class="edge">
-<title>convergence:e1_conv&#45;&gt;convergence:check_convergence</title>
+<title>convergence:e1&#45;&gt;convergence:check_convergence</title>
 <path fill="none" stroke="black" d="M111.29,-60.8C123.06,-69.47 137.48,-80.1 150.29,-89.54"/>
 <polygon fill="black" stroke="black" points="147.92,-92.14 158.05,-95.26 152.08,-86.51 147.92,-92.14"/>
 </g>
-<!-- convergence:e2_conv -->
-<g id="convergence:e2_conv" class="node">
-<title>convergence:e2_conv</title>
+<!-- convergence:e2 -->
+<g id="convergence:e2" class="node">
+<title>convergence:e2</title>
 <polygon fill="#9ecae1" stroke="black" points="364.81,-60.5 186.81,-60.5 186.81,-24.5 370.81,-24.5 370.81,-54.5 364.81,-60.5"/>
 <polyline fill="none" stroke="black" points="364.81,-60.5 364.81,-54.5"/>
 <polyline fill="none" stroke="black" points="370.81,-54.5 364.81,-54.5"/>
 <text xml:space="preserve" text-anchor="middle" x="278.81" y="-37.45" font-family="Times,serif" font-size="14.00">Intermediate logs are available</text>
 </g>
-<!-- convergence:e2_conv&#45;&gt;convergence:check_convergence -->
+<!-- convergence:e2&#45;&gt;convergence:check_convergence -->
 <g id="edge3" class="edge">
-<title>convergence:e2_conv&#45;&gt;convergence:check_convergence</title>
+<title>convergence:e2&#45;&gt;convergence:check_convergence</title>
 <path fill="none" stroke="black" d="M255.08,-60.8C243.2,-69.47 228.62,-80.1 215.67,-89.54"/>
 <polygon fill="black" stroke="black" points="213.84,-86.54 207.82,-95.26 217.97,-92.2 213.84,-86.54"/>
 </g>
