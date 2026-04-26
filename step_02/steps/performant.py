@@ -4,7 +4,7 @@
 
 from typing import Any, Callable
 from jpipe_runner.framework.decorators.jpipe_decorator import jpipe
-from jpipe_runner.framework.decorators.jpipe_decorator import jpipe_link
+from jpipe_runner.framework.decorators.link_decorator import jpipe_link
 
 JpipeProduce = Callable[[str, Any], None]
 

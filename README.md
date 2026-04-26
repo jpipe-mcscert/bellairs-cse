@@ -2,11 +2,20 @@
 
 ## How to install?
 
-- compiler & execution environment
+- compiler & execution environment on Mac OS
 ```
 $ brew tap jpipe-mcscert/mcscert
-$ brew install jpipe@1.9 jpipe-runner@3.1.0
+$ brew install jpipe jpipe-runner
 ```
+
+- compiler & execution environment on Ubuntu
+```
+$ sudo add-apt-repository ppa:mcscert/ppa
+$ sudo apt update
+$ sudo apt install jpipe jpipe-runner
+```
+
+More information about installation: [https://www.jpipe.org/tutorials/install/](https://www.jpipe.org/tutorials/install/)
 
 - VS Code plugin
   - https://marketplace.visualstudio.com/items?itemName=mcscert.jpipe-extension
@@ -35,7 +44,7 @@ justification performant {
 This justification can be compiled into a graphical representation:
 
 ```
-step_01 $ jpipe -d performant -i performant.jd -f svg \
+step_01 $ jpipe process -m performant -i performant.jd -f svg \
                 -o performant.svg
 ```
 
@@ -59,54 +68,64 @@ Our objective is to validate the claim we just made based on the evidence we can
 First step is to export the justification model into a JSON representation, so that it does not require the compiler anymore. 
 
 ```
-$  jpipe -d performant -i performant.jd -f json \
+$  jpipe process -m performant -i performant.jd -f json \
          -o performant.json
 ```
 
 Second step is to link all relevant nodes to executable code. the compiler can generate a code skeleton to accelerate this (we do not specify an output file with `-o` to avoid erasing the existing demo implementation).
 
 ```
-$ jpipe -d performant -i performant.jd -f runner
+$ jpipe process -m performant -i performant.jd -f runner
 ```
 
 Let's look at the pieces of evidence. We use a `mock` object instead of real model and dataset, but technically, it can be arbitrary Python code. The pieces of evidence:
-  - are annotated using `jpipe` decorator
+  - are annotated using `jpipe` and `jpipe_link` decorators
   - _produce_ an artifact (_e.g._, `model`, `tests`)
   - return `True` or `False` depending of their status
 
 ```python
+@jpipe_link("performant:e1")
 @jpipe(produce=["model"])
-def model_is_available(produce: Callable[[str, Any], None]) -> bool:
+def model_is_available(produce: JpipeProduce) -> bool:
+    """[evidence] Model is available"""
     if (found := 'model_file' in mock):
-        produce('model', True)
+        produce('model', mock['model_file'])
     return found  
 
+
+@jpipe_link("performant:e2")
 @jpipe(produce=["tests"])
-def test_dataset_is_available(produce: Callable[[str, Any], None]) -> bool:
+def test_dataset_is_available(produce: JpipeProduce) -> bool:
+    """[evidence] Test dataset is available"""
     if (found := 'test_dataset' in mock):
-        produce('tests', True)
-    return found  
-
+        produce('tests', mock['test_dataset'])
+    return found 
 ```
 
-The strategy _consumes_ the artifacts produced by the pieces of evidence supporting it. These elements are passed as parameter to the function. A strategy can also produce artifacts (here, the accuracy value). 
+The strategy _consumes_ the artifacts produced by the pieces of evidence supporting it. These elements are passed as parameter to the function. A strategy can also produce artifacts, even if it's not the case here. 
 
 ```python
-@jpipe(consume=["model", "tests"], produce=["accuracy"])
-def accuracy_is_greater_than_85(model: bool, tests: bool,
-                                produce: Callable[[str, Any], None]) -> bool:
-    if (ok := model and tests and mock['accuracy'] > 0.85):
-        produce("accuracy", mock['accuracy'])
-    return ok
+@jpipe_link("performant:s")
+@jpipe(consume=["model", "tests"], produce=[])
+def accuracy_is_greater_than_85(model: str, tests: str,
+                                produce: JpipeProduce) -> bool:
+    """[strategy] Accuracy is greater than 85"""
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the dataset
+    dataset_ok = tests.endswith('.csv')
+    # We're pretending evaluating the model using the dataset
+    accuracy_ok = ('accuracy' in mock) and mock['accuracy'] > 0.85
+    return model_ok and dataset_ok and accuracy_ok
 ```
 
 We can now execute the validation of the claim, assuming a `mock` object containing dummy data
 
 ```python
 mock = {
-    'accuracy':     0.92,
     'model_file':   'https://huggingface.co/boltuix/bert-emotion',
-    'test_dataset': 'tests.csv'
+    'test_dataset': 'tests.csv',
+    'accuracy':     0.92
 }
 ```
 
@@ -128,13 +147,13 @@ jPipe Files
 ==============================================================================
 jPipe Files.Justification :: performant                                       
 ==============================================================================
-evidence<e1> :: Model is available                           | PASS |
+evidence<performant:e1> :: Model is available                         | PASS |
 ------------------------------------------------------------------------------
-evidence<e2> :: Test dataset is available                    | PASS |
+evidence<performant:e2> :: Test dataset is available                  | PASS |
 ------------------------------------------------------------------------------
-strategy<s> :: Accuracy is greater than 85                   | PASS |
+strategy<performant:s> :: Accuracy is greater than 85                 | PASS |
 ------------------------------------------------------------------------------
-conclusion<c> :: My model is performant                      | PASS |
+conclusion<performant:c> :: My model is performant                    | PASS |
 ------------------------------------------------------------------------------
 jPipe Files
 1 justification, 4 passed, 0 failed, 0 skipped
@@ -145,12 +164,18 @@ performant diagram saved to: performant.svg
 Not using a supporting element inside the strategy will result in a warning.
 
 ```python
-@jpipe(consume=["model", "tests"], produce=["accuracy"])
-def accuracy_is_greater_than_85(model: bool, tests: bool,
-                                produce: Callable[[str, Any], None]) -> bool:
-    if (ok := model and mock['accuracy'] > 0.85): # missing `tests`
-        produce("accuracy", mock['accuracy'])
-    return ok
+@jpipe_link("performant:s")
+@jpipe(consume=["model", "tests"], produce=[])
+def accuracy_is_greater_than_85(model: str, tests: str,
+                                produce: JpipeProduce) -> bool:
+    """[strategy] Accuracy is greater than 85"""
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the dataset
+    dataset_ok = True # <== We're not using the "tests" variable
+    # We're pretending evaluating the model using the dataset
+    accuracy_ok = ('accuracy' in mock) and mock['accuracy'] > 0.85
+    return model_ok and dataset_ok and accuracy_ok
 ```
 
 
@@ -159,20 +184,15 @@ step_02 $ jpipe-runner --library steps/performant.py \
                        --diagram performant \
                        --format svg performant.json
 ...
-  _____ ____  ____   ___  ____    _     ___   ____ 
- | ____|  _ \|  _ \ / _ \|  _ \  | |   / _ \ / ___|
- |  _| | |_) | |_) | | | | |_) | | |  | | | | |  _ 
- | |___|  _ <|  _ <| |_| |  _ <  | |__| |_| | |_| |
- |_____|_| \_\_| \_\\___/|_| \_\ |_____\___/ \____|
-                                                   
-
-WARNING - inject_arguments():97 - 2026-03-02 12:03:49,686 - Consumed variable 'tests' is declared but not used in function 'accuracy_is_greater_than_85'.
+Error loading './steps/performant.py':
+[jpipe] Function 'accuracy_is_greater_than_85' declares consumed variable(s) ['tests'] that are never referenced in the function body.
+  • Fix: either reference each variable in the function body, or remove it from consume=[].
 ```
 
 ## Step 03: Looping in Continuous Integration
 
 - Code folder: `step_03`
-- Workflow: `.github/workflows/step_03.yml`
+- Workflow: [`.github/workflows/step_03.yml`](.github/workflows/step_03.yml)
 
 Objective: we want to check the claim each time a pull request is made. 
 
@@ -180,21 +200,17 @@ We just have to create a GitHub action workflow to start the runner when a pull 
 
 ```yaml
 name: jPipe Runner Workflow -- Step 03
-on:
-  pull_request:
-    paths:
-      - 'step_03/**'
 
-... clone repo, install python, ...
+... trigger, clone repo, install python, ...
 
       - name: Run jPipe Runner
-        uses: jpipe-mcscert/jpipe-runner@feat/v3.1.0
+        uses: jpipe-mcscert/jpipe-runner@v3.4.1
         with:
-          version: feat/v3.1.0
+          version: v3.4.1
           embed_image: "true"
           image_branch: "diagram-images"
-          jd_file: step_03/performant.json
-          library: step_03/steps/performant.py
+          jd_file: step_02/performant.json
+          library: step_02/steps/performant.py
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
 ```

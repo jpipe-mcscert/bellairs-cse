@@ -15,7 +15,8 @@ mock = {
     'test_dataset': 'tests.csv',
     'accuracy':     0.82,
     'counterfacts': 'counterfacts.csv',
-    'flip_rate':    0.08
+    'flip_rate':    0.08,
+    'log_file':     'training_logs.json'
 }
 
 #################
@@ -114,17 +115,22 @@ def the_trained_model_converges(produce: JpipeProduce) -> bool:
 
 @jpipe_link("final:convergence:check_convergence")
 @jpipe(produce=[], consume=["logs", "model"])
-def assessing_logs_to_measure_convergence(logs: bool, model: bool, 
+def assessing_logs_to_measure_convergence(logs: str, model: str, 
                                           produce: JpipeProduce) -> bool:
     """[strategy] Assessing logs to measure convergence"""
-    return model and logs
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the logs
+    log_ok = logs.endswith('.json')
+    return model_ok and log_ok
 
 @jpipe_link("final:convergence:e2")
 @jpipe(produce=["logs"])
 def intermediate_logs_are_available(produce: JpipeProduce) -> bool:
     """[evidence] Intermediate logs are available"""
-    produce('logs', True)
-    return True
+    if (found := 'log_file' in mock):
+        produce('logs', mock['log_file'])
+    return found  
 
 @jpipe_link("final:convergence:e1")
 @jpipe(produce=["model"])
