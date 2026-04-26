@@ -1,0 +1,11 @@
+// jpipe process -m fair -i fair.jd -f svg -o fair.svg
+justification fair {
+	conclusion c is "My model is fair"
+	strategy s   is "Assess counterfactual fairness"
+	s supports c
+
+	evidence e1  is "Model is available"
+	e1 supports s
+	evidence e2  is "Counterfactual dataset is available"
+	e2 supports s
+}

@@ -4,7 +4,7 @@
 
 from typing import Any, Callable
 from jpipe_runner.framework.decorators.jpipe_decorator import jpipe
-# from jpipe_runner.framework.decorators.jpipe_decorator import jpipe_link
+from jpipe_runner.framework.decorators.jpipe_decorator import jpipe_link
 
 JpipeProduce = Callable[[str, Any], None]
 
@@ -18,14 +18,14 @@ mock = {
 }
 
 
-# @jpipe_link("performant:c")
+@jpipe_link("performant:c")
 @jpipe(consume=["accuracy"])
 def my_model_is_performant() -> bool:
     """[conclusion] My model is performant"""
     return True
 
 
-# @jpipe_link("performant:s")
+@jpipe_link("performant:s")
 @jpipe(consume=["model", "tests"], produce=["accuracy"])
 def accuracy_is_greater_than_85(model: bool, tests: bool,
                                 produce: JpipeProduce) -> bool:
@@ -35,7 +35,7 @@ def accuracy_is_greater_than_85(model: bool, tests: bool,
     return ok
 
 
-# @jpipe_link("performant:e1")
+@jpipe_link("performant:e1")
 @jpipe(produce=["model"])
 def model_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Model is available"""
@@ -44,7 +44,7 @@ def model_is_available(produce: JpipeProduce) -> bool:
     return found  
 
 
-# @jpipe_link("performant:e2")
+@jpipe_link("performant:e2")
 @jpipe(produce=["tests"])
 def test_dataset_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Test dataset is available"""
