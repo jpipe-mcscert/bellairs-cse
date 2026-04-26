@@ -2,9 +2,6 @@ name: jPipe Runner Workflow -- Step 04
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'step_04/**'
 
 permissions:
   contents: write
@@ -24,9 +21,9 @@ jobs:
           python-version: "3.13"
 
       - name: Run jPipe Runner
-        uses: jpipe-mcscert/jpipe-runner@feat/v3.1.0
+        uses: jpipe-mcscert/jpipe-runner@v3.4.1
         with:
-          version: feat/v3.1.0
+          version: v3.4.1
           embed_image: "true"
           image_branch: "diagram-images"
           jd_file: step_04/deployable.json

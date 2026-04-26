@@ -2,9 +2,6 @@ name: jPipe Runner Workflow -- Step 03
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'step_03/**'
 
 permissions:
   contents: write
@@ -24,11 +21,11 @@ jobs:
           python-version: "3.13"
 
       - name: Run jPipe Runner
-        uses: jpipe-mcscert/jpipe-runner@feat/v3.1.0
+        uses: jpipe-mcscert/jpipe-runner@v3.4.1
         with:
-          version: feat/v3.1.0
+          version: v3.4.1
           embed_image: "true"
           image_branch: "diagram-images"
-          jd_file: step_03/performant.json
-          library: step_03/steps/performant.py
+          jd_file: step_02/performant.json
+          library: step_02/steps/performant.py
           github-token: ${{ secrets.GITHUB_TOKEN }}

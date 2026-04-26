@@ -8,37 +8,33 @@ from jpipe_runner.framework.decorators.link_decorator import jpipe_link
 
 JpipeProduce = Callable[[str, Any], None]
 
-# jpipe-runner --library steps/deployable.py --model deployable --format svg deployable.json
+# jpipe-runner --library steps/deployable.py --diagram deployable --format svg deployable.json
 
 mock = {
-    'accuracy':     0.82,
     'model_file':   'https://huggingface.co/boltuix/bert-emotion',
     'test_dataset': 'tests.csv',
-    'counterfacts': 'counterfacts.csv'
+    'accuracy':     0.82,
+    'counterfacts': 'counterfacts.csv',
+    'flip_rate':    0.08
 }
 
 #################
 #### Shared #####
 #################
 
-@jpipe_link("deployable:assembleConclusion")
-@jpipe(consume=[])
-def model_is_deployable() -> bool:
-    """[conclusion] Model is deployable"""
-    return True
-
 @jpipe_link("deployable:assembleStrategy")
-@jpipe(produce=[], consume=[])
-def all_conditions_are_met(produce: JpipeProduce) -> bool:
+@jpipe(produce=[], consume=["fair", "performant"])
+def all_conditions_are_met(fair: bool, performant: bool,
+                           produce: JpipeProduce) -> bool:
     """[strategy] All conditions are met"""
-    return True
+    return fair and performant
 
 @jpipe_link("deployable:unified_0")
 @jpipe(produce=["model"])
 def model_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Model is available"""
     if (found := 'model_file' in mock):
-        produce('model', True)
+        produce('model', mock['model_file'])
     return found  
 
 ######################
@@ -46,52 +42,62 @@ def model_is_available(produce: JpipeProduce) -> bool:
 ######################
 
 @jpipe_link("deployable:performant:c")
-@jpipe(produce=[], consume=["accuracy"])
+@jpipe(produce=["performant"], consume=[])
 def my_model_is_performant(produce: JpipeProduce) -> bool:
     """[sub-conclusion] My model is performant"""
+    produce('performant', True)
     return True
 
-
 @jpipe_link("deployable:performant:s")
-@jpipe(consume=["model", "tests"], produce=["accuracy"])
-def accuracy_is_greater_than_85(model: bool, tests: bool,
+@jpipe(consume=["model", "tests"], produce=[])
+def accuracy_is_greater_than_85(model: str, tests: str,
                                 produce: JpipeProduce) -> bool:
     """[strategy] Accuracy is greater than 85"""
-    if (ok := model and tests and mock['accuracy'] > 0.85):
-        produce("accuracy", mock['accuracy'])
-    return ok
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the dataset
+    dataset_ok = tests.endswith('.csv')
+    # We're pretending evaluating the model using the dataset
+    accuracy_ok = ('accuracy' in mock) and mock['accuracy'] > 0.85
+    return model_ok and dataset_ok and accuracy_ok
 
 @jpipe_link("deployable:performant:e2")
 @jpipe(produce=["tests"])
 def test_dataset_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Test dataset is available"""
     if (found := 'test_dataset' in mock):
-        produce('tests', True)
-    return found  
+        produce('tests', mock['test_dataset'])
+    return found 
 
 ###################
 #### Fairness #####
 ###################
 
 @jpipe_link("deployable:fair:c")
-@jpipe(produce=[], consume=["fair"])
-def my_model_is_fair(fair: bool, produce: JpipeProduce) -> bool:
+@jpipe(produce=["fair"], consume=[])
+def my_model_is_fair(produce: JpipeProduce) -> bool:
     """[sub-conclusion] My model is fair"""
+    produce('fair', True)
     return True
 
 
 @jpipe_link("deployable:fair:s")
-@jpipe(consume=["counterfactual", "model"], produce=["fair"])
+@jpipe(consume=["counterfactual", "model"], produce=[])
 def assess_counterfactual_fairness(counterfactual: str, model: str,
                                    produce: JpipeProduce) -> bool:
     """[strategy] Assess counterfactual fairness"""
-    produce('fair', True)
-    return counterfactual and model
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the dataset
+    counterfactual_ok = counterfactual.endswith('.csv')
+    # We're pretending evaluating the model using the dataset
+    flip_rate_ok = ('flip_rate' in mock) and mock['flip_rate'] < 0.2
+    return model_ok and counterfactual_ok and flip_rate_ok
 
 @jpipe_link("deployable:fair:e2")
 @jpipe(produce=["counterfactual"])
 def counterfactual_dataset_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Counterfactual dataset is available"""
     if (found := 'counterfacts' in mock):
-        produce('counterfactual', True)
+        produce('counterfactual', mock['counterfacts'])
     return found  

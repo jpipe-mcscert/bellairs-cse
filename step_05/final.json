@@ -1,116 +1,128 @@
 {
   "elements": [
     {
-      "id": "converged",
-      "label": "The trained model converges",
-      "type": "sub-conclusion"
-    },
-    {
-      "id": "c",
+      "escaped": "model_is_deployable",
+      "id": "final:deployable:assembleConclusion",
       "label": "Model is deployable",
       "type": "conclusion"
     },
     {
-      "id": "s",
-      "label": "Accuracy is greater than 80",
-      "type": "strategy"
-    },
-    {
-      "id": "e2_fair",
-      "label": "Counterfactual dataset is available",
-      "type": "evidence"
-    },
-    {
-      "id": "AND",
-      "label": "All conditions are met",
-      "type": "strategy"
-    },
-    {
-      "id": "s_fair",
-      "label": "Assess counterfactual fairness",
-      "type": "strategy"
-    },
-    {
-      "id": "check_convergence",
-      "label": "Assessing logs to measure convergence",
-      "type": "strategy"
-    },
-    {
-      "id": "e2_conv",
-      "label": "Intermediate logs are available",
-      "type": "evidence"
-    },
-    {
-      "id": "c_fair",
+      "escaped": "my_model_is_fair",
+      "id": "final:deployable:fair:c",
       "label": "My model is fair",
       "type": "sub-conclusion"
     },
     {
-      "id": "c_perf",
+      "escaped": "assess_counterfactual_fairness",
+      "id": "final:deployable:fair:s",
+      "label": "Assess counterfactual fairness",
+      "type": "strategy"
+    },
+    {
+      "escaped": "the_trained_model_converges",
+      "id": "final:hook",
+      "label": "The trained model converges",
+      "type": "sub-conclusion"
+    },
+    {
+      "escaped": "counterfactual_dataset_is_available",
+      "id": "final:deployable:fair:e2",
+      "label": "Counterfactual dataset is available",
+      "type": "evidence"
+    },
+    {
+      "escaped": "my_model_is_performant",
+      "id": "final:deployable:performant:c",
       "label": "My model is performant",
       "type": "sub-conclusion"
     },
     {
-      "id": "e1_conv",
+      "escaped": "accuracy_is_greater_than_80",
+      "id": "final:deployable:performant:s",
+      "label": "Accuracy is greater than 80",
+      "type": "strategy"
+    },
+    {
+      "escaped": "test_dataset_is_available",
+      "id": "final:deployable:performant:e2",
+      "label": "Test dataset is available",
+      "type": "evidence"
+    },
+    {
+      "escaped": "all_conditions_are_met",
+      "id": "final:deployable:assembleStrategy",
+      "label": "All conditions are met",
+      "type": "strategy"
+    },
+    {
+      "escaped": "assessing_logs_to_measure_convergence",
+      "id": "final:convergence:check_convergence",
+      "label": "Assessing logs to measure convergence",
+      "type": "strategy"
+    },
+    {
+      "escaped": "trained_model_is_available",
+      "id": "final:convergence:e1",
       "label": "Trained model is available",
       "type": "evidence"
     },
     {
-      "id": "e2",
-      "label": "Test dataset is available",
+      "escaped": "intermediate_logs_are_available",
+      "id": "final:convergence:e2",
+      "label": "Intermediate logs are available",
       "type": "evidence"
     }
   ],
   "name": "final",
+  "type": "justification",
   "relations": [
     {
-      "source": "check_convergence",
-      "target": "converged"
+      "source": "final:deployable:assembleStrategy",
+      "target": "final:deployable:assembleConclusion"
     },
     {
-      "source": "AND",
-      "target": "c"
+      "source": "final:deployable:fair:s",
+      "target": "final:deployable:fair:c"
     },
     {
-      "source": "converged",
-      "target": "s"
+      "source": "final:convergence:check_convergence",
+      "target": "final:hook"
     },
     {
-      "source": "e2",
-      "target": "s"
+      "source": "final:deployable:performant:s",
+      "target": "final:deployable:performant:c"
     },
     {
-      "source": "c_fair",
-      "target": "AND"
+      "source": "final:hook",
+      "target": "final:deployable:fair:s"
     },
     {
-      "source": "c_perf",
-      "target": "AND"
+      "source": "final:deployable:fair:e2",
+      "target": "final:deployable:fair:s"
     },
     {
-      "source": "converged",
-      "target": "s_fair"
+      "source": "final:hook",
+      "target": "final:deployable:performant:s"
     },
     {
-      "source": "e2_fair",
-      "target": "s_fair"
+      "source": "final:deployable:performant:e2",
+      "target": "final:deployable:performant:s"
     },
     {
-      "source": "e2_conv",
-      "target": "check_convergence"
+      "source": "final:deployable:fair:c",
+      "target": "final:deployable:assembleStrategy"
     },
     {
-      "source": "e1_conv",
-      "target": "check_convergence"
+      "source": "final:deployable:performant:c",
+      "target": "final:deployable:assembleStrategy"
     },
     {
-      "source": "s_fair",
-      "target": "c_fair"
+      "source": "final:convergence:e1",
+      "target": "final:convergence:check_convergence"
     },
     {
-      "source": "s",
-      "target": "c_perf"
+      "source": "final:convergence:e2",
+      "target": "final:convergence:check_convergence"
     }
-  ],
-  "type": "justification"
+  ]
 }

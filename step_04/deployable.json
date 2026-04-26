@@ -13,9 +13,9 @@
       "type": "sub-conclusion"
     },
     {
-      "escaped": "assess_counterfactual_fairness",
+      "escaped": "flip_rate_is_below_10",
       "id": "deployable:fair:s",
-      "label": "Assess counterfactual fairness",
+      "label": "Flip-rate is below 10%",
       "type": "strategy"
     },
     {

@@ -12,27 +12,23 @@ JpipeProduce = Callable[[str, Any], None]
 # jpipe-runner --library steps/performant.py --diagram performant --format svg performant.json
 
 mock = {
-    'accuracy':     0.92,
     'model_file':   'https://huggingface.co/boltuix/bert-emotion',
-    'test_dataset': 'tests.csv'
+    'test_dataset': 'tests.csv',
+    'accuracy':     0.92
 }
 
-
-@jpipe_link("performant:c")
-@jpipe(consume=["accuracy"])
-def my_model_is_performant() -> bool:
-    """[conclusion] My model is performant"""
-    return True
-
-
 @jpipe_link("performant:s")
-@jpipe(consume=["model", "tests"], produce=["accuracy"])
-def accuracy_is_greater_than_85(model: bool, tests: bool,
+@jpipe(consume=["model", "tests"], produce=[])
+def accuracy_is_greater_than_85(model: str, tests: str,
                                 produce: JpipeProduce) -> bool:
     """[strategy] Accuracy is greater than 85"""
-    if (ok := model and tests and mock['accuracy'] > 0.85):
-        produce("accuracy", mock['accuracy'])
-    return ok
+    # We're pretending loading the model
+    model_ok = model.startswith('https')
+    # We're pretending loading the dataset
+    dataset_ok = tests.endswith('.csv')
+    # We're pretending evaluating the model using the dataset
+    accuracy_ok = ('accuracy' in mock) and mock['accuracy'] > 0.85
+    return model_ok and dataset_ok and accuracy_ok
 
 
 @jpipe_link("performant:e1")
@@ -40,7 +36,7 @@ def accuracy_is_greater_than_85(model: bool, tests: bool,
 def model_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Model is available"""
     if (found := 'model_file' in mock):
-        produce('model', True)
+        produce('model', mock['model_file'])
     return found  
 
 
@@ -49,7 +45,7 @@ def model_is_available(produce: JpipeProduce) -> bool:
 def test_dataset_is_available(produce: JpipeProduce) -> bool:
     """[evidence] Test dataset is available"""
     if (found := 'test_dataset' in mock):
-        produce('tests', True)
+        produce('tests', mock['test_dataset'])
     return found 
 
 
