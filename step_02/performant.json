@@ -1,40 +1,44 @@
 {
   "elements": [
     {
-      "id": "c",
+      "escaped": "my_model_is_performant",
+      "id": "performant:c",
       "label": "My model is performant",
       "type": "conclusion"
     },
     {
-      "id": "s",
+      "escaped": "accuracy_is_greater_than_85",
+      "id": "performant:s",
       "label": "Accuracy is greater than 85",
       "type": "strategy"
     },
     {
-      "id": "e1",
+      "escaped": "model_is_available",
+      "id": "performant:e1",
       "label": "Model is available",
       "type": "evidence"
     },
     {
-      "id": "e2",
+      "escaped": "test_dataset_is_available",
+      "id": "performant:e2",
       "label": "Test dataset is available",
       "type": "evidence"
     }
   ],
   "name": "performant",
+  "type": "justification",
   "relations": [
     {
-      "source": "s",
-      "target": "c"
+      "source": "performant:s",
+      "target": "performant:c"
     },
     {
-      "source": "e1",
-      "target": "s"
+      "source": "performant:e1",
+      "target": "performant:s"
     },
     {
-      "source": "e2",
-      "target": "s"
+      "source": "performant:e2",
+      "target": "performant:s"
     }
-  ],
-  "type": "justification"
+  ]
 }

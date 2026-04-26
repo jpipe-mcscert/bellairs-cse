@@ -1,6 +1,6 @@
 
 
-// jpipe -d performant -i performant.jd -f svg -o performant.svg
+// jpipe process -m performant -i performant.jd -f svg -o performant.svg
 justification performant {
 	conclusion c is "My model is performant"
 	strategy s   is "Accuracy is greater than 85"

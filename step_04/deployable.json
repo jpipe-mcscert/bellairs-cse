@@ -1,89 +1,98 @@
 {
   "elements": [
     {
-      "id": "c",
+      "escaped": "model_is_deployable",
+      "id": "deployable:assembleConclusion",
       "label": "Model is deployable",
       "type": "conclusion"
     },
     {
-      "id": "s",
-      "label": "Accuracy is greater than 85",
-      "type": "strategy"
-    },
-    {
-      "id": "e2_fair",
-      "label": "Counterfactual dataset is available",
-      "type": "evidence"
-    },
-    {
-      "id": "AND",
-      "label": "All conditions are met",
-      "type": "strategy"
-    },
-    {
-      "id": "s_fair",
-      "label": "Assess counterfactual fairness",
-      "type": "strategy"
-    },
-    {
-      "id": "c_fair",
+      "escaped": "my_model_is_fair",
+      "id": "deployable:fair:c",
       "label": "My model is fair",
       "type": "sub-conclusion"
     },
     {
-      "id": "e1_fair",
+      "escaped": "flip_rate_is_below_10",
+      "id": "deployable:fair:s",
+      "label": "Flip-rate is below 10%",
+      "type": "strategy"
+    },
+    {
+      "escaped": "model_is_available",
+      "id": "deployable:unified_0",
       "label": "Model is available",
       "type": "evidence"
     },
     {
-      "id": "c_perf",
+      "escaped": "counterfactual_dataset_is_available",
+      "id": "deployable:fair:e2",
+      "label": "Counterfactual dataset is available",
+      "type": "evidence"
+    },
+    {
+      "escaped": "my_model_is_performant",
+      "id": "deployable:performant:c",
       "label": "My model is performant",
       "type": "sub-conclusion"
     },
     {
-      "id": "e2",
+      "escaped": "accuracy_is_greater_than_85",
+      "id": "deployable:performant:s",
+      "label": "Accuracy is greater than 85",
+      "type": "strategy"
+    },
+    {
+      "escaped": "test_dataset_is_available",
+      "id": "deployable:performant:e2",
       "label": "Test dataset is available",
       "type": "evidence"
+    },
+    {
+      "escaped": "all_conditions_are_met",
+      "id": "deployable:assembleStrategy",
+      "label": "All conditions are met",
+      "type": "strategy"
     }
   ],
   "name": "deployable",
+  "type": "justification",
   "relations": [
     {
-      "source": "AND",
-      "target": "c"
+      "source": "deployable:assembleStrategy",
+      "target": "deployable:assembleConclusion"
     },
     {
-      "source": "e1_fair",
-      "target": "s"
+      "source": "deployable:fair:s",
+      "target": "deployable:fair:c"
     },
     {
-      "source": "e2",
-      "target": "s"
+      "source": "deployable:performant:s",
+      "target": "deployable:performant:c"
     },
     {
-      "source": "c_fair",
-      "target": "AND"
+      "source": "deployable:unified_0",
+      "target": "deployable:fair:s"
     },
     {
-      "source": "c_perf",
-      "target": "AND"
+      "source": "deployable:fair:e2",
+      "target": "deployable:fair:s"
     },
     {
-      "source": "e2_fair",
-      "target": "s_fair"
+      "source": "deployable:unified_0",
+      "target": "deployable:performant:s"
     },
     {
-      "source": "e1_fair",
-      "target": "s_fair"
+      "source": "deployable:performant:e2",
+      "target": "deployable:performant:s"
     },
     {
-      "source": "s_fair",
-      "target": "c_fair"
+      "source": "deployable:fair:c",
+      "target": "deployable:assembleStrategy"
     },
     {
-      "source": "s",
-      "target": "c_perf"
+      "source": "deployable:performant:c",
+      "target": "deployable:assembleStrategy"
     }
-  ],
-  "type": "justification"
+  ]
 }
